@@ -4,30 +4,44 @@ import psutil
 class SysMonitor:
 
     def __init__(self):
-        self.__data = {}
+        self.__data = {
+            "sensors": {},
+            "cpu": {},
+            "ram": {},
+            "disk": {}
+        }
     
     def get_system_stats(self):
-        sensor_temp = psutil.sensors_temperatures()
-        print(sensor_temp.keys())
-        for thermal_data in sensor_temp['cpu_thermal']:
-            cpu_temp = round(thermal_data.current, 2)
-            
-        ram = psutil.virtual_memory()
-        disk = psutil.disk_usage('/')
+
+        for hw_temp, temp_points in psutil.sensors_temperatures().items():
+            self.__data["sensors"][hw_temp] = {}
+            for temp in temp_points:
+                temp_name = temp.label.replace(' ','_').lower() if temp.label else "temp"
+                self.__data["sensors"][hw_temp][temp_name] = round(temp.current, 2)
         
-        self.__data = {
-            "cpu_temp": cpu_temp,
-            "cpu_temp_unit": "C",
-            "cpu_usage": round(psutil.cpu_percent(), 2),
-            "cpu_usage_unit": "%",
-            "ram_total": round(ram.total / 10**9, 3),
-            "ram_available": round(ram.available / 10**9, 3), 
-            "ram_used": round(ram.used / 10**9, 3),
-            "ram_unit": "GB",
-            "disk_total": round(disk.total / 10**9, 3), 
-            "disk_free": round(disk.used / 10**9, 3), 
-            "disk_used": round(disk.free / 10**9, 3),
-            "disk_unit": "GB"
+            self.__data["sensors"][hw_temp]["unit"] = "C"
+
+        cpu_usage = psutil.cpu_percent(interval=1, percpu=True)
+
+        self.__data["cpu"]["usage"] = {f"cpu_{count}": round(usage, 2) for count, usage in enumerate(cpu_usage)}
+        self.__data["cpu"]["usage"]["unit"] = "%"
+
+        ram = psutil.virtual_memory()
+
+        self.__data["ram"]["virtual"] = {
+            "total": round(ram.total / 10**9, 3),
+            "available": round(ram.available / 10**9, 3), 
+            "used": round(ram.used / 10**9, 3),
+            "unit": "GB"
+        }
+
+        disk = psutil.disk_usage('/')
+
+        self.__data["disk"]["usage"] = {
+            "total": round(disk.total / 10**9, 3), 
+            "free": round(disk.used / 10**9, 3), 
+            "used": round(disk.free / 10**9, 3),
+            "unit": "GB" 
         }
 
         return self.__data

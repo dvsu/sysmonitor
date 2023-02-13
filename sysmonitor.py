@@ -42,7 +42,7 @@ class SysMonitor:
                           memory=self.ram_stats(),
                           storage=self.disk_stats())
 
-        if as_dict:
+        if as_dict == True:
             return asdict(data)
 
         return data

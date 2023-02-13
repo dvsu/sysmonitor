@@ -1,6 +1,17 @@
 from typing import Optional
 from dataclasses import dataclass
-from src.models.system_measurement import SystemMeasurement
+
+
+@dataclass
+class Measurement:
+    name: str
+    unit: str
+    value: float
+
+
+@dataclass
+class SystemMeasurement:
+    measurement: list[Measurement]
 
 
 @dataclass

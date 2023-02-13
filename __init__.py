@@ -1,1 +1,1 @@
-from sysmonitor.src import SysMonitor as SysMonitor
+from .sysmonitor import SysMonitor as SysMonitor

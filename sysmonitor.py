@@ -1,6 +1,6 @@
 import psutil
 from dataclasses import asdict
-from src.models import SystemData, SystemMeasurement, Measurement
+from sysmonitor.dependencies.models import SystemData, SystemMeasurement, Measurement
 
 
 class SysMonitor:

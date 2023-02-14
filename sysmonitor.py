@@ -1,4 +1,5 @@
 import psutil
+from datetime import datetime
 from dataclasses import asdict
 from sysmonitor.dependencies.models import SystemData, SystemMeasurement, Measurement
 
@@ -40,7 +41,8 @@ class SysMonitor:
     def system_stats(self, as_dict: bool = False) -> SystemData:
         data = SystemData(cpu=self.cpu_stats(),
                           memory=self.ram_stats(),
-                          storage=self.disk_stats())
+                          storage=self.disk_stats(),
+                          timestamp=datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
 
         if as_dict == True:
             return asdict(data)

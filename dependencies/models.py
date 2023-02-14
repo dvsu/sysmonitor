@@ -19,3 +19,4 @@ class SystemData:
     cpu: Optional[SystemMeasurement]
     memory: Optional[SystemMeasurement]
     storage: Optional[SystemMeasurement]
+    timestamp: str

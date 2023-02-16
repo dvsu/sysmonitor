@@ -42,7 +42,7 @@ class SysMonitor:
         data = SystemData(cpu=self.cpu_stats(),
                           memory=self.ram_stats(),
                           storage=self.disk_stats(),
-                          timestamp=datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
+                          timestamp=datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"))
 
         if as_dict == True:
             return asdict(data)

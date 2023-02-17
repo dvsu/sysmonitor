@@ -11,7 +11,7 @@ class Measurement:
 
 @dataclass
 class SystemMeasurement:
-    measurement: list[Measurement]
+    measurements: list[Measurement]
 
 
 @dataclass

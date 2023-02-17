@@ -16,13 +16,13 @@ class SysMonitor:
                 name=f"cpu_thermal{temp.label}", unit="c", value=temp.current)
                 for temp in cpu_thermal]
 
-        return SystemMeasurement(measurement=[
+        return SystemMeasurement(measurements=[
             Measurement(name=f"cpu_{count}_load", unit="%", value=round(usage, 2))
             for count, usage in enumerate(cpu_usage)] + sensor_measurements)
 
     def ram_stats(self) -> SystemMeasurement:
         ram = psutil.virtual_memory()
-        return SystemMeasurement(measurement=[
+        return SystemMeasurement(measurements=[
             Measurement(name="memory_total", unit="GB", value=round(ram.total / 10**9, 3)),
             Measurement(name="memory_available", unit="GB", value=round(ram.available / 10**9, 3)),
             Measurement(name="memory_used", unit="GB", value=round(ram.used / 10**9, 3)),
@@ -31,7 +31,7 @@ class SysMonitor:
 
     def disk_stats(self) -> dict:
         disk = psutil.disk_usage('/')
-        return SystemMeasurement(measurement=[
+        return SystemMeasurement(measurements=[
             Measurement(name="storage_total", unit="GB", value=round(disk.total / 10**9, 3)),
             Measurement(name="storage_free", unit="GB", value=round(disk.free / 10**9, 3)),
             Measurement(name="storage_used", unit="GB", value=round(disk.used / 10**9, 3)),

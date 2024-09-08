@@ -15,5 +15,6 @@ class DeviceStats(BaseModel):
     cpu: Hardware | None = None
     memory: Hardware | None = None
     storage: Hardware | None = None
+    sensors: Hardware | None = None
     datetime_utc: str
     timestamp_nanosec: int

@@ -8,23 +8,12 @@ from .models import DeviceStats, Hardware, HardwareMeasurement
 class SysMonitor:
     def cpu_stats(self) -> Hardware:
         cpu_usage = psutil.cpu_percent(interval=1, percpu=True)
-        cpu_thermal = psutil.sensors_temperatures().get("cpu_thermal")
-
-        sensor_measurements = []
-        if cpu_thermal and len(cpu_thermal) > 0:
-            sensor_measurements = [
-                HardwareMeasurement(
-                    name=f"cpu_thermal{temp.label}", unit="C", value=temp.current
-                )
-                for temp in cpu_thermal
-            ]
 
         return Hardware(
             measurements=[
                 HardwareMeasurement(name=f"cpu_{count}_load", unit="%", value=round(usage, 2))
                 for count, usage in enumerate(cpu_usage)
             ]
-            + sensor_measurements
         )
 
     def ram_stats(self) -> Hardware:
@@ -61,6 +50,29 @@ class SysMonitor:
             ]
         )
 
+    def sensors_stats(self) -> Hardware:
+        sensors_temperatures = psutil.sensors_temperatures()
+
+        measurements: list[HardwareMeasurement] = []
+
+        for device, sensors in sensors_temperatures.items():
+            for sensor in sensors:
+                if sensor.current > 0:
+                    sensor_label = device
+
+                    if sensor.label:
+                        sensor_label += f"_{sensor.label.replace(' ', '_')}"
+
+                    measurements.append(
+                        HardwareMeasurement(
+                            name=sensor_label,
+                            unit="C",
+                            value=sensor.current,
+                        )
+                    )
+
+        return Hardware(measurements=measurements)
+
     def system_stats(self) -> DeviceStats:
         datetime_now = datetime.now(timezone.utc)
 
@@ -72,6 +84,7 @@ class SysMonitor:
             cpu=self.cpu_stats(),
             memory=self.ram_stats(),
             storage=self.disk_stats(),
+            sensors=self.sensors_stats(),
             datetime_utc=utc_string,
             timestamp_nanosec=timestamp_nanosec,
         )
